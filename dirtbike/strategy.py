@@ -101,7 +101,11 @@ class WheelStrategy(Strategy):
         try:
             # If we're lucky, the information for what files are installed on
             # the system are available in RECORD, aka wheel metadata.
-            files = self._metadata.get_metadata('RECORD').splitlines()
+            # RECORD may also have sha256sum and file size, we only want the
+            # name.
+            files = []
+            for line in self._metadata.get_metadata('RECORD').splitlines():
+                files.append(line.split(',')[0])
         # Python 3 - use FileNotFoundError
         except IOError as error:
             self._files = None
